@@ -6,6 +6,12 @@
  * Rewrite of ds3_create_cust.c by <dave_jaffe@dell.com> and <tmuirhead@vmware.com>
  *
  * This code randomly selects a first and last name.
+ * Syntax: ds3_create_cust n_first n_last region_str n_Sys_Type
+ *         (see details below)
+ * To compile: gcc -o ds3_create_cust ds3_create_cust.c -lm
+ *
+ * Added - capability to create Linux or Windows type line endings
+ *       - syntax when not enough parameters are specified - TM 3/11/26
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -57,6 +63,8 @@ int main(int argc, char* argv[]) {
     char username[25];
     char fn_cust[15];
     FILE *FP_cust;
+	
+	int i_Sys_Type = 0;	//0 for Linux, 1 for Windows
 
     time_t seconds=time(NULL);
     struct tm* current_time=localtime(&seconds);
@@ -65,25 +73,42 @@ int main(int argc, char* argv[]) {
 
     srand((unsigned int)time(NULL));
 
-    if (argc >= 2) {
+    //if (argc >= 2) {
 	// Check for first parameter starting with a '-'.
-	if (strncmp(argv[1],"-", 1) == 0) {
-		fprintf(stderr, "Syntax: %s n_first n_last region_str\n",argv[0]);
-		exit(-1);
-	}
+	//if (strncmp(argv[1],"-", 1) == 0) {
+	//	fprintf(stderr, "Syntax: %s n_first n_last region_str\n",argv[0]);
+	//	exit(-1);
+	//}
+	
+	if (argc < 4)   
+    {
+    fprintf(stderr, "Syntax: ds3_create_cust n_first n_last region_str <S,M or L> n_Sys_Type\n");
+    fprintf(stderr, "        where n_first, n_last are the starting and ending customer id numbers\n");
+    fprintf(stderr, "Creates customer data files for DS3 database\n");
+    fprintf(stderr, "Region_str can be US or ROW\n");
+	fprintf(stderr, "S,M, or L refers to the scale size of the data\n");
+    fprintf(stderr, "n_Sys_Type can be 0 (Linux) or 1 (Windows)\n");	
+    fprintf(stderr, "Examples: ds3_create_cust  1     1000  US  L  0  =>  US custs   1    -> 1000 Large Linux   Format\n");
+    fprintf(stderr, "          ds3_create_cust  1001  2000  ROW L  1  =>  US custs   1001 -> 2000 Large Windows Format\n");
+    exit(-1);
+    }
 
 	n_first = atoi(argv[1]);
 	n_last = n_first + 100;
-    }
+    
     if (argc >= 3) {
 	n_last = atoi(argv[2]);
     }
     if (argc >= 4) {
-	if (strncmp(argv[3],"ROW", 3) == 0) {
-		region = 2;
-		sprintf(fn_cust, "%s_cust.csv", "row");
-	}
-    }
+	    if (strncmp(argv[3],"ROW", 3) == 0) {
+		    region = 2;
+		    sprintf(fn_cust, "%s_cust.csv", "row");
+	    }
+		if (strncmp(argv[5],"1", 1) == 0) {
+		    i_Sys_Type = 1;  //If system type set to Windows, set as windows, otherwise it will be Linux
+	    }
+    }            
+    
 
     FP_cust = fopen(fn_cust, "wb");
 
@@ -148,10 +173,7 @@ int main(int argc, char* argv[]) {
 // nice human readable formatting, gcc -DNICE ds3_create_cust.c
 #ifdef NICE
 	printf("%d,%-12s,%-12s,%-33s,,%-20s,%s,%05d,%-12s,%d,%-32s,%s,%d,%8s,%s,%s,password,%d,%6d,%s\n",
-#else
-	fprintf(FP_cust, "%d,%s,%s,%s,,%s,%s,%05d,%s,%d,%s,%s,%d,%s,%s,%s,password,%d,%d,%s\n",
-#endif
-	       i,
+	           i,
                first_name,
                last_name,
                street,
@@ -169,6 +191,50 @@ int main(int argc, char* argv[]) {
                age,
                income,
                gender);
+#else
+	if(i_Sys_Type == 0) {   //If system type is Linux, append line feed only
+	    fprintf(FP_cust, "%d,%s,%s,%s,,%s,%s,%05d,%s,%d,%s,%s,%d,%s,%s,%s,password,%d,%d,%s%c",
+	           i,
+               first_name,
+               last_name,
+               street,
+               city,
+               state,
+               zip,
+               country,
+               region,
+               email,
+               phone,
+               creditcard_type,
+               creditcard,
+               creditcard_exp,
+               username,
+               age,
+               income,
+               gender,10);
+	}
+	else {            //else system type is windows, append return and line feed
+		fprintf(FP_cust, "%d,%s,%s,%s,,%s,%s,%05d,%s,%d,%s,%s,%d,%s,%s,%s,password,%d,%d,%s%c%c",
+	           i,
+               first_name,
+               last_name,
+               street,
+               city,
+               state,
+               zip,
+               country,
+               region,
+               email,
+               phone,
+               creditcard_type,
+               creditcard,
+               creditcard_exp,
+               username,
+               age,
+               income,
+               gender, 13, 10);
+	}
+#endif
     }
 
     fclose(FP_cust);

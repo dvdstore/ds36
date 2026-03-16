@@ -40,7 +40,6 @@
 #include "ds_actor_names.h"
 
 #define MAX_CATEGORY 16
-#define VECTOR_DIM 384
 
 float  price;
 int    prod_id, category, quan_in_stock, special, sales_prod_id, sales, common_prod_id, membership_item_type;
@@ -61,30 +60,21 @@ int main(int argc, char* argv[])
   {
   int n_prods, i;
   int i_Sys_Type = 0;	 //0 for Linux, 1 for Windows        //Added by GSK
-  int i_gen_vectors = 0;
 
   srand((unsigned int)time(NULL));
 
   // Check syntax
   if (argc < 3)    //Changed by GSK
   {
-    fprintf(stderr, "Syntax: %s n_prods n_Sys_Type i_gen_vectors\n", argv[0]);
+    fprintf(stderr, "Syntax: %s n_prods n_Sys_Type\n", argv[0]);
     fprintf(stderr, "n_Sys_Type can be 0 (Linux) or 1 (Windows) \n"); //Added by GSK
-    fprintf(stderr, "i_gen_vectors can be 0 (no vector data) or 1 (generate vector data) \n"); //Added by DPY
     exit(-1);
   }
 
   n_prods = atoi(argv[1]);
   i_Sys_Type = atoi(argv[2]);    //Added by GSK
 
-  if (argc == 4) 
-  {
-    i_gen_vectors = atoi(argv[3]);
-  }
-
-#ifndef NICE
   FP_prod = fopen("prod.csv", "wb");
-#endif
 
   for (i = 0; i < n_prods; i++)
     {
@@ -113,9 +103,9 @@ int main(int argc, char* argv[])
     // For catalogs of less than 100,000 items select 1 item in 100 as Specials
     // For catalogs of 100,000 items or more select 1 item in 10,000 as Specials
     if (n_prods>100000)
-	special = (10000 == random2(1, 10000));
+	    special = (10000 == random2(1, 10000));
     else
-	special = (100 == random2(1, 100));
+	    special = (100 == random2(1, 100));
 
     // Select another prod_id that customers bought who bought this one
     common_prod_id = random2(1, n_prods);
@@ -123,27 +113,14 @@ int main(int argc, char* argv[])
     // Select the level of permier membership that this item belong in - 0,1,2 or 3
     membership_item_type = random2(0, 3);
 
-#ifdef NICE
-    printf("%5d,%3d,%35s,%30s, %5.2f, %d, %d, %d\n", prod_id, category, title, actor, price, special, common_prod_id, membership_item_type);
-#else
-    fprintf(FP_prod, "%d,%d,%s,%s,%5.2f,%d,%d,%d", prod_id, category, title, actor, price, special, common_prod_id, membership_item_type);
-    /* Add the Vector Column as a JSON array string */
-    if (i_gen_vectors == 1) {
-       fprintf(FP_prod, ",\"[");
-       for (int v = 0; v < VECTOR_DIM; v++) {
-           // Generates a mock float between -1.0 and 1.0 for test data
-           float mock_val = ((float)rand()/(float)(RAND_MAX)) * 2.0 - 1.0;
-           fprintf(FP_prod, "%.4f%s", mock_val, (v < VECTOR_DIM - 1) ? "," : "");
-       }
-       fprintf(FP_prod, "]\"");
-    }
-    fprintf(FP_prod, "\n");
-#endif
-
+    if(i_Sys_Type == 0)   //If System is Linux, Append LF only    //Added by GSK
+      {	
+		fprintf(FP_prod, "%d,%d,%s,%s,%5.2f,%d,%d,%d%c", prod_id, category, title, actor, price, special, common_prod_id, membership_item_type, 10);
+      }	
+    else if(i_Sys_Type == 1) //If System is Windows, Append CR+LF   //Added by GSK   
+      {
+		fprintf(FP_prod, "%d,%d,%s,%s,%5.2f,%d,%d,%d%c%c", prod_id, category, title, actor, price, special, common_prod_id, membership_item_type, 13, 10);
+      }
     } // end for
-
-#ifndef NICE
     fclose(FP_prod);
-#endif
-
   } // end main
