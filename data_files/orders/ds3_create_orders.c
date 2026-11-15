@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
   int adder=0, max_prod_id = 1000, max_cust_id = 1000;
   double netamount, tax, totalamount;
   char* ind;
-  char filename[20], fn_orders[35], fn_orderlines[35], fn_cust_hist[35], orderdate[10];
+  char filename[20], fn_orders[35], fn_orderlines[35], fn_cust_hist[35], orderdate[12];
   FILE *FP_orders, *FP_orderlines, *FP_cust_hist;
   time_t tptr;
 

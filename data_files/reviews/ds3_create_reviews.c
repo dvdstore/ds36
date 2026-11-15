@@ -38,7 +38,7 @@ int    review_id, prod_id, stars_num, cust_id, reviews_tot_num, n_customers, n_r
 int    i, j, k, i_year, i_month, i_day_of_month;
 int    review_helpfulness_id, helpfulness_rating, num_helpfulness_reviews;
 int    i_review_length, cur_review_length;
-char   review_summary[150], review_text[2000], review_date[10];
+char   review_summary[150], review_text[2000], review_date[12];
 
 int    i_days_in_month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 

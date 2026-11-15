@@ -58,7 +58,7 @@ my $str_is_Large_DB = "";
 my $str_file_name = "";				#Store name of file to be created from template
 
 
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux or macos
 {
 	my $default_db = "";
 
@@ -267,7 +267,7 @@ if($bln_is_DB_MSSQL == 1)
                 $arr_db_file_paths[$i_LoopCount] =~ s{/?$}{$pathsep};	# Append path separator
         }
 
-	if(lc($^O) eq lc("linux"))
+	if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))
 	{
 		print "\nEnable vector search (supported in MS SQL Server 2025) (Y / N) [N] : ";
 		chomp($is_use_vector_S = <STDIN>);
@@ -283,7 +283,7 @@ if($bln_is_DB_MSSQL == 1)
 
 if($bln_is_DB_MYSQL == 1)
 {
-	if(lc($^O) eq lc("linux"))
+	if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))
 	{
 		print "\nEnable vector search (verify that your version of MySQL supports it.) (Y / N) [N] : ";
 		chomp($is_use_vector_S = <STDIN>);
@@ -503,7 +503,7 @@ print "$par1_Start $par2_End $par3_Fname $par4_DB_Size $par_Sys_Type \n";
 
 #Need to Call exe when System on which perl script is run is Windows
 #We need to check which OS this perl script is being run
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux or macos
 {
 	system("gcc -o ds3_create_cust ds3_create_cust.c -lm");
 	system("chmod 755 ds3_create_cust");
@@ -528,7 +528,7 @@ $par3_Fname = "ROW";
 
 print "$par1_Start $par2_End $par3_Fname $par4_DB_Size $par_Sys_Type \n";
 
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux
 {
 	system("./ds3_create_cust $par1_Start $par2_End $par3_Fname $par4_DB_Size $par_Sys_Type");		
 }
@@ -581,7 +581,7 @@ for($i_LoopCount = 0; $i_LoopCount < 12; $i_LoopCount++)
 	
 	print "$par1_Start $par2_End $par3_ArrMonth[$i_LoopCount] $par4_DB_Size $par5_Month_Number $par_Sys_Type $par_Max_Prod_Id $par_Max_Cust_Id \n";
 	
-	if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+	if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux
 	{
 		system("gcc -o ds3_create_orders ds3_create_orders.c -lm");
 		system("chmod 755 ds3_create_orders");
@@ -613,7 +613,7 @@ $par_n_Prod = $i_Prod_Rows;   #Initialize to number of rows for Product table
 #Create Inventory CSV file first since we are in orders folder now
 print "\nCreating Inventory CSV file!!!! \n";
 
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux
 {
 	system("gcc -o ds3_create_inv ds3_create_inv.c -lm");
 	system("chmod 755 ds3_create_inv");
@@ -648,7 +648,7 @@ chdir "./prod/";
 #Create Product CSV file first since we are in prod folder now
 print "\nCreating product CSV file!!!! \n";
 
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux
 {
 	system("gcc -o ds3_create_prod ds3_create_prod.c -lm");
 	system("chmod 755 ds3_create_prod");
@@ -677,7 +677,7 @@ chdir "./membership/";
 
 print "\nCreating membership CSV file!!!! \n";
 
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux
 {
 	system("gcc -o ds3_create_membership ds3_create_membership.c -lm");
 	system("chmod 755 ds3_create_membership");
@@ -708,7 +708,7 @@ print "\nCreating reviews and reviews helpfulness CSV files!!!! \n";
 
 my $par_review_rows = $par_n_Prod * $par_Avg_Reviews;
 
-if(lc($^O) eq lc("linux"))   #If system on which perl script is executing is Linux
+if(lc($^O) eq lc("linux")||(lc($^O) eq lc("darwin")))   #If system on which perl script is executing is Linux
 {
 	system("gcc -o ds3_create_reviews ds3_create_reviews.c -lm");
 	system("chmod 755 ds3_create_reviews");
